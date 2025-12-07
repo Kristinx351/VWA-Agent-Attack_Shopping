@@ -108,12 +108,6 @@ class LM_Client:
             openai.organization = os.environ.get("OPENAI_ORGANIZATION", "")
         elif model_name == "mixtral":
             self.model = "mistralai/Mixtral-8x7B-Instruct-v0.1"
-            # openai.api_key = "esecret_xv1c6k71xizxxpxed457wgwlib"
-            # openai.base_url = "https://api.endpoints.anyscale.com/v1"
-            # self.client = OpenAI(
-            #     base_url = "https://api.endpoints.anyscale.com/v1",
-            #     api_key="esecret_xv1c6k71xizxxpxed457wgwlib",
-            # )
         else:
             raise ValueError(f"Invalid model name: {model_name}")
 

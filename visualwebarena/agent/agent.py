@@ -36,9 +36,7 @@ def _sanitize_intent(raw_intent: str) -> str:
     """
     if not isinstance(raw_intent, str):
         return raw_intent
-    # 去掉类似 [SYSTEM OVERRIDE: ...] 这一段
     cleaned = re.sub(r"\[SYSTEM OVERRIDE:.*?\]", "", raw_intent, flags=re.IGNORECASE)
-    # 压缩多余空白
     cleaned = re.sub(r"\s+", " ", cleaned).strip()
     return cleaned or raw_intent
 
@@ -150,7 +148,6 @@ class PromptAgent(Agent):
         self, trajectory: Trajectory, intent: str, meta_data: dict[str, Any], images: Optional[list[Image.Image]] = None,
         output_response: bool = False
     ) -> Action:
-        # 预处理 intent，去掉潜在的系统覆盖攻击片段
         intent = _sanitize_intent(intent)
         # Create page screenshot image for multimodal models.
         if self.multimodal_inputs:
@@ -265,7 +262,6 @@ class ReflexionAgent(Agent):
         self, trajectory: Trajectory, intent: str, meta_data: dict[str, Any], images: Optional[list[Image.Image]] = None,
         output_response: bool = False
     ) -> Action:
-        # 预处理 intent，去掉潜在的系统覆盖攻击片段
         intent = _sanitize_intent(intent)
         # Handle multimodal inputs if applicable
         if self.multimodal_inputs:
@@ -373,7 +369,6 @@ class SearchAgent(Agent):
         self, trajectory: Trajectory, intent: str, meta_data: dict[str, Any], images: Optional[list[Image.Image]] = None,
         output_response: bool = False, branching_factor: int = 5
     ) -> list[Action]:
-        # 预处理 intent，去掉潜在的系统覆盖攻击片段
         intent = _sanitize_intent(intent)
         if output_response:
             print("Using SearchAgent, branching_factor =", branching_factor)

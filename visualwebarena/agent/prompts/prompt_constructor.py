@@ -119,7 +119,6 @@ class DirectPromptConstructor(PromptConstructor):
         page = state_info['info']['page']
         url = page.url
         previous_action_str = meta_data['action_history'][-1]
-        # 模板中可能包含 {intro} 占位符，这里显式传入以避免 KeyError('intro')
         current = template.format(
             intro=intro,
             objective=intent,
@@ -164,7 +163,6 @@ class CoTPromptConstructor(PromptConstructor):
         page = state_info['info']['page']
         url = page.url
         previous_action_str = meta_data['action_history'][-1]
-        # 同样显式传入 intro，防止模板中包含 {intro} 时触发 KeyError
         current = template.format(
             intro=intro,
             objective=intent,
@@ -209,7 +207,6 @@ class MultimodalCoTPromptConstructor(CoTPromptConstructor):
         page = state_info['info']['page']
         url = page.url
         previous_action_str = meta_data['action_history'][-1]
-        # multimodal 版本同样需要传入 intro，避免模板占位符缺失
         current = template.format(
             intro=intro,
             objective=intent,
@@ -228,7 +225,6 @@ class MultimodalCoTPromptConstructor(CoTPromptConstructor):
             if self.lm_config.mode == 'chat':
                 message = [{'role': 'system', 'content': [{'type': 'text', 'text': intro}]}]
                 for ex in examples:
-                    # examples 可能被攻击修改为长度 != 3，这里做一次健壮切片
                     if not isinstance(ex, (list, tuple)) or len(ex) < 2:
                         continue
                     x = ex[0]
@@ -251,7 +247,6 @@ class MultimodalCoTPromptConstructor(CoTPromptConstructor):
                             if 'gpt-4o' in self.lm_config.model:
                                 message[-1]['content'] = message[-1]['content'][:-2]
                         except Exception:
-                            # 如果示例图片路径异常，则退化为纯文本示例
                             message.append(
                                 {
                                     'role': 'system',
@@ -260,7 +255,6 @@ class MultimodalCoTPromptConstructor(CoTPromptConstructor):
                                 }
                             )
                     else:
-                        # 没有图片信息时，使用纯文本示例
                         message.append(
                             {
                                 'role': 'system',
@@ -343,10 +337,8 @@ class ReflexionPromptConstructor(CoTPromptConstructor):
         }
 
         for k, v in defaults.items():
-            # 1. 补全顶层字典 (self.instruction['intro'])
             if k not in self.instruction:
                 self.instruction[k] = v
-            # 2. 补全 meta_data 字典 (self.instruction['meta_data']['intro'])
             if k not in self.instruction['meta_data']:
                 self.instruction['meta_data'][k] = v
 

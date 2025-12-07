@@ -395,7 +395,6 @@ def test(args: argparse.Namespace, config_file_list: list[str], use_caption=True
         render_helper.close()
 
     env.close()
-    # 当所有任务在过程中报错时，scores 可能为空，直接相除会导致 ZeroDivisionError
     if len(scores) == 0:
         logger.info("Benign success rate: 0.0 (no successful evaluations; scores list is empty)")
     else:
